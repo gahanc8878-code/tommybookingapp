@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Tommy's Bookings</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+
+    <ul>
+  <li><a href="/">Home</a></li>
+  <li><a href="/bookings">Book a Tommy</a></li>
+  <li style="float:right"><a href="/about">What IS a Tommy?</a></li>
+  <li style="float:right"><a class="active" href="/tommy">Tommy View</a></li>
+</ul>
+
+    <div id="loginContainer" style="max-width:300px; margin: 100px auto; text-align:center;">
+        <h2>Admin Login</h2>
+        <input type="password" id="passwordInput" placeholder="Enter password" style="padding:8px; width:100%; margin-bottom:10px; font-size:1rem;">
+        <button onclick="login()" style="padding:10px 30px; font-size:1rem; cursor:pointer;">Login</button>
+        <p id="loginError" style="color:red;"></p>
+    </div>
+
+    <div id="adminContainer" style="display:none;">
+        <h1 style="text-align:center; margin-top:30px;">Tommy's Bookings</h1>
+
+        <div class="calendar">
+            <div class="calendar-header">
+                <button onclick="changeDay(-1)">&#8249;</button>
+                <h2 id="calendarTitle"></h2>
+                <button onclick="changeDay(1)">&#8250;</button>
+            </div>
+            <div class="time-grid" id="timeGrid"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentDate = new Date();
+        let allBookings = [];
+
+        async function login() {
+            const password = document.getElementById('passwordInput').value;
+            const res = await fetch('/api/admin/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password })
+            });
+
+            if (res.ok) {
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('adminContainer').style.display = 'block';
+                await loadBookings();
+                renderCalendar();
+            } else {
+                document.getElementById('loginError').textContent = 'Wrong password.';
+            }
+        }
+
+        async function loadBookings() {
+            const res = await fetch('/api/admin/bookings');
+            allBookings = await res.json();
+        }
+
+        function changeDay(dir) {
+            currentDate.setDate(currentDate.getDate() + dir);
+            renderCalendar();
+        }
+
+        function formatDateStr(date) {
+            return date.toISOString().split('T')[0];
+        }
+
+        function renderCalendar() {
+            const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+            const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+            const dateStr = formatDateStr(currentDate);
+
+            document.getElementById('calendarTitle').textContent =
+                `${days[currentDate.getDay()]}, ${currentDate.getDate()} ${months[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+
+            const todaysBookings = allBookings.filter(b => {
+                const bDate = new Date(b.date).toLocaleDateString('en-CA');
+                return bDate === dateStr;
+            });
+
+            const grid = document.getElementById('timeGrid');
+            grid.innerHTML = '';
+
+            // 8am to 9pm
+            for (let hour = 8; hour <= 21; hour++) {
+                const row = document.createElement('div');
+                row.className = 'time-row';
+
+                const label = document.createElement('div');
+                label.className = 'time-label';
+                label.textContent = hour <= 12 ? `${hour}am` : `${hour - 12}pm`;
+                if (hour === 12) label.textContent = '12pm';
+
+                const slot = document.createElement('div');
+                slot.className = 'time-slot';
+
+                // Check for bookings in this hour
+                todaysBookings.forEach(b => {
+                    const [startH, startM] = b.start_time.split(':').map(Number);
+                    const [endH, endM] = b.end_time.split(':').map(Number);
+
+                    const startTotal = startH * 60 + startM;
+                    const endTotal = endH * 60 + endM;
+                    const hourStart = hour * 60;
+                    const hourEnd = (hour + 1) * 60;
+
+                    if (startTotal < hourEnd && endTotal > hourStart) {
+                        const block = document.createElement('div');
+                        block.className = 'booking-block';
+
+                        // Position within the hour
+                        const topOffset = Math.max(0, startTotal - hourStart);
+                        const height = Math.min(endTotal, hourEnd) - Math.max(startTotal, hourStart);
+
+                        block.style.top = `${(topOffset / 60) * 60}px`;
+                        block.style.height = `${(height / 60) * 60}px`;
+                        block.textContent = `${b.name} — ${b.start_time} – ${b.end_time}`;
+                        block.title = 'Click to cancel';
+
+                        block.addEventListener('click', () => cancelBooking(b.id));
+                        slot.appendChild(block);
+                    }
+                });
+
+                row.appendChild(label);
+                row.appendChild(slot);
+                grid.appendChild(row);
+            }
+        }
+
+        async function cancelBooking(id) {
+            if (!confirm('Cancel this booking?')) return;
+            const res = await fetch(`/api/bookings/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                await loadBookings();
+                renderCalendar();
+            } else {
+                alert('Failed to cancel booking.');
+            }
+        }
+
+        document.getElementById('passwordInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') login();
+        });
+    </script>
+
+</body>
+</html>

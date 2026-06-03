@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Tommy</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+
+ <ul>
+  <li><a  href="/">Home</a></li>
+  <li><a class="active"href="/bookings">Book a Tommy</a></li>
+  <li style="float:right"><a href="/about">What IS a Tommy?</a></li>
+  <li style="float:right"><a href="/tommy">Tommy View</a></li>
+</ul>
+
+<br><br>
+<img
+  id="mainIcon"
+  src="photos/thomas3.png"
+  alt="ICON"
+    style="display: block; margin-left: auto; margin-right: auto; width: 200px;"
+    >
+    <div class="booking-container">
+        <h1>Book Tommy</h1>
+        <p>Tommy is a very busy man. Choose wisely.</p>
+
+        <form id="bookingForm">
+
+            <label for="name">Your Name</label>
+            <input type="text" id="name" name="name" required placeholder="Enter your name">
+
+            <label for="date">Date</label>
+            <input type="date" id="date" name="date" required>
+
+            <label for="start_time">From</label>
+            <input type="time" id="start_time" name="start_time" required>
+
+            <label for="end_time">To</label>
+            <input type="time" id="end_time" name="end_time" required>
+
+            <button type="submit">Request Tommy</button>
+        </form>
+
+        <p id="message"></p>
+    </div>
+
+    <script>
+        document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const date = document.getElementById('date').value;
+            const start_time = document.getElementById('start_time').value;
+            const end_time = document.getElementById('end_time').value;
+
+            if (end_time <= start_time) {
+                document.getElementById('message').style.color = 'red';
+                document.getElementById('message').textContent = 'End time must be after start time.';
+                return;
+            }
+
+            const res = await fetch('/api/bookings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, date, start_time, end_time })
+            });
+
+            const data = await res.json();
+            const message = document.getElementById('message');
+
+            if (res.ok) {
+                message.style.color = 'green';
+                message.textContent = 'Booking confirmed! Tommy has been notified (he will probably ignore this).';
+            } else {
+                message.style.color = 'red';
+                message.textContent = data.error || 'Something went wrong.';
+            }
+        });
+    </script>
+
+</body>
+</html>

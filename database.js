@@ -7,27 +7,35 @@ const pool = mysql.createPool({
     database: process.env.DB_NAME,
 });
 
-export async function getBookings() {
-    const [rows] = await pool.query('SELECT * FROM bookings ORDER BY date, time');
+export async function getBookingsByDate(date) {
+    const [rows] = await pool.query(
+        'SELECT * FROM bookings WHERE date = ? ORDER BY start_time',
+        [date]
+    );
     return rows;
 }
 
-export async function createBooking(name, reason, date, time) {
+export async function createBooking(date, start_time, end_time, name) {
     const [result] = await pool.query(
-        'INSERT INTO bookings (name, reason, date, time) VALUES (?, ?, ?, ?)',
-        [name, reason, date, time]
+        'INSERT INTO bookings (date, start_time, end_time, name) VALUES (?, ?, ?, ?)',
+        [date, start_time, end_time, name]
     );
     return result;
 }
 
-export async function isSlotTaken(date, time) {
+export async function isSlotOverlapping(date, start_time, end_time) {
     const [rows] = await pool.query(
-        'SELECT id FROM bookings WHERE date = ? AND time = ?',
-        [date, time]
+        'SELECT id FROM bookings WHERE date = ? AND start_time < ? AND end_time > ?',
+        [date, end_time, start_time]
     );
     return rows.length > 0;
 }
 
 export async function deleteBooking(id) {
     await pool.query('DELETE FROM bookings WHERE id = ?', [id]);
+}
+
+export async function getAllBookings() {
+    const [rows] = await pool.query('SELECT * FROM bookings ORDER BY date, start_time');
+    return rows;
 }
