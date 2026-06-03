@@ -1,0 +1,314 @@
+/*Nav Bar*/
+body {
+  margin: 0;
+  padding: 0;
+}
+
+h2, p {
+  margin: 10px;
+}
+
+p {
+  font-family: sans-serif;
+  text-align: center;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  background-color: #333333;
+  display: flex;
+  justify-content: flex-start;
+}
+
+ul li:last-child {
+  margin-left: auto;
+}
+
+ul li a {
+  display: block;
+  color: white;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+ul li a:hover {
+  background-color: #111111;
+}
+
+ul li a.active {
+  background-color: rgb(161, 8, 115);
+}
+
+.d {
+      margin-top: 0px;
+      width: 30px;
+      margin-left: 2px;
+      margin-right: 2px;
+    }
+/*Navbar End*/
+
+
+h1{
+    color: #000000;
+    text-align: center;
+}
+
+h2{
+    color: #000000;
+    text-align: center;
+}
+
+img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 20%;
+}
+
+/*Buttons On Main Screen*/
+.button-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .button-row a {
+      display: inline-block;
+      padding: 10px 16px;
+      background-color: rgb(161, 8, 115);
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 16px;
+      transition: background-color 0.2s ease;
+    }
+
+    .button-row a:hover {
+      background-color: rgb(99, 0, 69);
+    }
+
+    .button-row a img {
+  display: inline;
+  height: 1em;
+  width: auto;
+  margin: 0;
+  position: relative;  
+  top: 2px;            
+}
+
+/*Alert Box For Sending Ticket*/
+#overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 99;
+}
+
+#customAlert {
+    display: none;
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    z-index: 100;
+}
+
+#overlay.active, #customAlert.active {
+    display: block;
+}
+
+/*Ticket Form*/
+
+.middle{
+  margin-left: 250px;
+}
+
+.contact-textbox{
+  width: 300px;
+  height: 50px;
+  font-size: large;
+  background-color: white;
+  color: rgb(0, 0, 0);
+  border: 1px solid  rgb(161, 8, 115);
+  border-radius: 5px;
+}
+
+.contact-messagebox{
+  font-family: sans-serif;
+  width: 500px;
+  height: 150px;
+  font-size: large;
+  resize: none;
+  border: 1px solid  rgb(161, 8, 115);
+  border-radius: 5px;
+  background-color: white;
+}
+
+input:focus {
+  outline: none;
+  font-family: sans-serif;
+}
+
+textarea:focus {
+  font-family: sans-serif;
+  outline: none;
+  border: 1px solid rgb(161, 8, 115);
+}
+
+.sendbtn{
+  width: 220px;
+  height: 55px;
+  font-size: large;
+  background-color: rgb(161, 8, 115);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  border-radius: 35px;
+}
+
+.sendbtn a:hover {
+      background-color: rgb(143, 47, 2);
+    }
+
+/*Divider for send ticket screen*/
+.split-container {
+    display: flex;
+    height: calc(100vh - 50px);
+}
+
+.left-side {
+    flex: 1;
+    padding: 30px;
+}
+
+.divider {
+    width: 2px;
+    height: 100%;
+    background-color: #333333;
+}
+
+.right-side {
+    flex: 1;
+    padding: 30px;
+}
+
+.ticketpagelogo{
+  margin-top: 190px;
+  width: 50%;
+  align-self: auto;
+}
+
+/*Admin Login Positioning*/
+.admin-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20vh;
+}
+
+h4 {
+    text-align: center;
+    color: #000000;
+    font-family: sans-serif;
+    font-size: 50px;
+}
+
+/*Ticket List*/
+.table-container {
+    width: 90%;
+    margin: 20px auto;
+    max-height: 400px;
+    overflow-y: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgb(161, 8, 115);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+}
+
+th {
+    background-color: rgb(161, 8, 115);
+    color: white;
+    padding: 12px 16px;
+    text-align: left;
+    position: sticky;
+    top: 0;
+}
+
+td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgb(161, 8, 115);
+    transition: background-color 0.3s ease;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+tr:hover td {
+    background-color: #a1a1a1;
+    cursor: pointer;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.no-tickets {
+    text-align: center;
+    color: #888;
+    padding: 40px;
+}
+
+/*Individual Ticket*/
+.ticket-card {
+    width: 50%;
+    margin: 40px auto;
+    background-color: white;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.ticket-card h2 {
+    margin-top: 0;
+    border-bottom: 2px solid #333;
+    padding-bottom: 10px;
+}
+
+.ticket-field {
+    margin: 16px 0;
+}
+
+.ticket-field span {
+    font-weight: bold;
+}
+
+.back-btn {
+    display: block;
+    width: fit-content;
+    margin: 0 auto 20px auto;
+    padding: 8px 16px;
+    background-color: #333;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.back-btn:hover {
+    background-color: #555;
+}
